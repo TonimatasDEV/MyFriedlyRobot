@@ -10,7 +10,8 @@ public class Main {
 
             boolean isPressedByRobot = false;
             while (true) {
-                Color color = robot.getPixelColor(960, 539);
+                Point center = getCenterPixel();
+                Color color = robot.getPixelColor(center.x, center.y);
 
                 String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 
@@ -26,5 +27,18 @@ public class Main {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    private static Dimension getScreenDimension() {
+        return Toolkit.getDefaultToolkit().getScreenSize();
+    }
+
+    public static Point getCenterPixel() {
+        Dimension screenDimension = getScreenDimension();
+
+        int centerX = screenDimension.width / 2;
+        int centerY = screenDimension.height / 2;
+
+        return new Point(centerX, centerY);
     }
 }
