@@ -15,4 +15,13 @@ public class Screen {
 
         return new Point(centerX, centerY);
     }
+
+    public static Point getInferiorBorderPixel() {
+        Dimension screenDimension = getScreenDimension();
+
+        int indicatorX = 1300;
+        int indicatorY = screenDimension.height - 1;
+
+        return new Point(indicatorX, indicatorY);
+    }
 }
