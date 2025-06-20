@@ -7,7 +7,6 @@ import java.awt.event.InputEvent;
 
 public class RobotThread implements Runnable {
     private static boolean isPressedByRobot = false;
-    // private static boolean holdingButton = false;
 
     @Override
     public void run() {
