@@ -9,22 +9,14 @@ public class GlobalKeyListener implements NativeKeyListener {
     public void nativeKeyPressed(NativeKeyEvent e) {
         System.out.println("Key Pressed: " + NativeKeyEvent.getKeyText(e.getKeyCode()));
 
-        numberIsPressed(e);
-    }
-
-    public static void numberIsPressed(NativeKeyEvent e) {
         if (!keyPressed) {
             keyPressed = e.getKeyCode() == NativeKeyEvent.VC_6;
-        }
-
-        if (keyPressed) {
-            if (e.getKeyCode() == NativeKeyEvent.VC_1 ||
+        } else {
+            keyPressed = !(e.getKeyCode() == NativeKeyEvent.VC_1 ||
                     e.getKeyCode() == NativeKeyEvent.VC_2 ||
                     e.getKeyCode() == NativeKeyEvent.VC_3 ||
                     e.getKeyCode() == NativeKeyEvent.VC_4 ||
-                    e.getKeyCode() == NativeKeyEvent.VC_5) {
-                keyPressed = false;
-            }
+                    e.getKeyCode() == NativeKeyEvent.VC_5);
         }
     }
 }
