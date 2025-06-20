@@ -1,17 +1,13 @@
 package dev.tonimatas.myfriendlyrobot;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.*;
-
 public class RobotThread implements Runnable {
     private static boolean isPressedByRobot = false;
+    private static boolean holdingButton = false;
 
     @Override
     public void run() {
@@ -27,19 +23,15 @@ public class RobotThread implements Runnable {
                 Color colorCenter = robot.getPixelColor(center.x, center.y);
                 Color colorLeft = robot.getPixelColor(center.x - 38, center.y);
 
-                String redHexValue = "#fe0000";
-
                 String hexCenter = String.format("#%02x%02x%02x", colorCenter.getRed(), colorCenter.getGreen(), colorCenter.getBlue());
                 String hexLeft = String.format("#%02x%02x%02x", colorLeft.getRed(), colorLeft.getGreen(), colorLeft.getBlue());
 
                 String hexToCalculate = GlobalKeyListener.keyPressed ? hexLeft : hexCenter;
 
-                if (hexToCalculate.equalsIgnoreCase(redHexValue)) {
-                    if (GlobalKeyListener.keyPressed) {
-                        keyLogic(robot, hexToCalculate);
-                    } else {
-                        invertedKeyLogic(robot, hexToCalculate);
-                    }
+                if (GlobalKeyListener.keyPressed) {
+                    invertedKeyLogic(robot, hexToCalculate);
+                } else {
+                    keyLogic(robot, hexToCalculate);
                 }
             }
         } catch (Exception ignored) {
@@ -60,13 +52,13 @@ public class RobotThread implements Runnable {
 
     private void invertedKeyLogic(Robot robot, String hex) {
         if (hex.equalsIgnoreCase("#fe0000")) {
-            if (isPressedByRobot) {
+            if (holdingButton) {
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                isPressedByRobot = false;
+                holdingButton = false;
             }
         } else {
             robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            isPressedByRobot = true;
+            holdingButton = true;
         }
     }
 }
