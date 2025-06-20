@@ -1,45 +1,44 @@
 package dev.tonimatas.myfriendlyrobot;
 
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+
 import java.awt.*;
 import java.awt.event.InputEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.*;
+
 public class RobotThread implements Runnable {
+    private static boolean isPressedByRobot = false;
+
     @Override
     public void run() {
         try {
+            GlobalScreen.registerNativeHook();
+            GlobalScreen.addNativeKeyListener(new GlobalKeyListener());
+
             Robot robot = new Robot();
 
-            boolean isPressedByRobot = false;
             for (;;) {
                 Point center = Screen.getCenterPixel();
-                Point inferiorBorder = Screen.getInferiorBorderPixel();
 
                 Color colorCenter = robot.getPixelColor(center.x, center.y);
                 Color colorLeft = robot.getPixelColor(center.x - 38, center.y);
-                Color colorInferiorBorder = robot.getPixelColor(inferiorBorder.x, inferiorBorder.y);
+
+                String redHexValue = "#fe0000";
 
                 String hexCenter = String.format("#%02x%02x%02x", colorCenter.getRed(), colorCenter.getGreen(), colorCenter.getBlue());
                 String hexLeft = String.format("#%02x%02x%02x", colorLeft.getRed(), colorLeft.getGreen(), colorLeft.getBlue());
 
-                if (inferiorColorChanged(colorInferiorBorder)) {
-                    if (hexLeft.equalsIgnoreCase("#fe0000")) {
-                        if (isPressedByRobot) {
-                            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                            isPressedByRobot = false;
-                        }
+                String hexToCalculate = GlobalKeyListener.keyPressed ? hexLeft : hexCenter;
+
+                if (hexToCalculate.equalsIgnoreCase(redHexValue)) {
+                    if (GlobalKeyListener.keyPressed) {
+                        keyLogic(robot, hexToCalculate);
                     } else {
-                        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                        isPressedByRobot = true;
-                    }
-                } else {
-                    if (hexCenter.equalsIgnoreCase("#fe0000")) {
-                        robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                        isPressedByRobot = true;
-                    } else {
-                        if (isPressedByRobot) {
-                            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                            isPressedByRobot = false;
-                        }
+                        invertedKeyLogic(robot, hexToCalculate);
                     }
                 }
             }
@@ -47,9 +46,27 @@ public class RobotThread implements Runnable {
         }
     }
 
-    private boolean inferiorColorChanged(Color color) {
-        return color.getRed() >= 0 && color.getRed() <= 50
-                && color.getGreen() >= 50 && color.getGreen() <= 150
-                && color.getBlue() >= 0 && color.getBlue() <= 25;
+    private void keyLogic(Robot robot, String hex) {
+        if (hex.equalsIgnoreCase("#fe0000")) {
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            isPressedByRobot = true;
+        } else {
+            if (isPressedByRobot) {
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                isPressedByRobot = false;
+            }
+        }
+    }
+
+    private void invertedKeyLogic(Robot robot, String hex) {
+        if (hex.equalsIgnoreCase("#fe0000")) {
+            if (isPressedByRobot) {
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                isPressedByRobot = false;
+            }
+        } else {
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            isPressedByRobot = true;
+        }
     }
 }
