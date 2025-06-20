@@ -7,7 +7,7 @@ import java.awt.event.InputEvent;
 
 public class RobotThread implements Runnable {
     private static boolean isPressedByRobot = false;
-    private static boolean holdingButton = false;
+    // private static boolean holdingButton = false;
 
     @Override
     public void run() {
@@ -17,7 +17,7 @@ public class RobotThread implements Runnable {
 
             Robot robot = new Robot();
 
-            for (;;) {
+            for (; ; ) {
                 Point center = Screen.getCenterPixel();
 
                 Color colorCenter = robot.getPixelColor(center.x, center.y);
@@ -35,6 +35,7 @@ public class RobotThread implements Runnable {
                 }
             }
         } catch (Exception ignored) {
+
         }
     }
 
@@ -52,13 +53,15 @@ public class RobotThread implements Runnable {
 
     private void invertedKeyLogic(Robot robot, String hex) {
         if (hex.equalsIgnoreCase("#fe0000")) {
-            if (holdingButton) {
+            if (isPressedByRobot) {
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-                holdingButton = false;
+                isPressedByRobot = false;
             }
         } else {
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            holdingButton = true;
+            if (hex.equalsIgnoreCase("#fefefe")) {
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                isPressedByRobot = true;
+            }
         }
     }
 }
