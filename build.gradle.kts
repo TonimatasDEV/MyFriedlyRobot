@@ -12,7 +12,6 @@ repositories {
 
 dependencies {
     implementation("com.github.kwhat:jnativehook:2.2.2")
-    implementation("net.java.dev.jna:jna:5.18.1")
 }
 
 java {
@@ -21,8 +20,6 @@ java {
 }
 
 tasks.jar {
-    
-    
     dependsOn("shadowJar")
     archiveClassifier.set("plain")
 }
