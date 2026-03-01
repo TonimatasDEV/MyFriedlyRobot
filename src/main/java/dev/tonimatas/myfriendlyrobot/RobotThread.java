@@ -16,7 +16,7 @@ public class RobotThread implements Runnable {
 
             Robot robot = new Robot();
 
-            for (; ; ) {
+            for (;;) {
                 Point center = Screen.getCenterPixel();
 
                 Color colorCenter = robot.getPixelColor(center.x, center.y);
@@ -39,7 +39,7 @@ public class RobotThread implements Runnable {
     }
 
     private void keyLogic(Robot robot, String hex) {
-        if (hex.equalsIgnoreCase("#fe0000")) {
+        if (hex.equalsIgnoreCase("#ff0000") || hex.equalsIgnoreCase("#fe0000")) {
             robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             isPressedByRobot = true;
         } else {
@@ -51,7 +51,7 @@ public class RobotThread implements Runnable {
     }
 
     private void invertedKeyLogic(Robot robot, String hex) {
-        if (hex.equalsIgnoreCase("#fe0000")) {
+        if (hex.equalsIgnoreCase("#ff0000") || hex.equalsIgnoreCase("#fe0000")) {
             if (isPressedByRobot) {
                 robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
                 isPressedByRobot = false;
